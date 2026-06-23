@@ -12,6 +12,7 @@ export default class NavigationsController {
     public productPage({view}:HttpContext){
     return view.render('pages/productPage')
     }
+    
 
     public activityPage({view}:HttpContext){
     return view.render('pages/activity/index')
