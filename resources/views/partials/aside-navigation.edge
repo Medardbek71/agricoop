@@ -1,0 +1,76 @@
+<nav style="display: flex; flex-direction: column; width: 240px; background-color: #ffffff; border-right: 1px solid #f0f0f0; padding: 40px 24px; box-sizing: border-box; gap: 8px; min-height: 100vh;">
+  <div style="font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 32px; color: #a0a0a0; padding-left: 8px;">
+    <a href="{{ route('home') }}" style="text-decoration: none; color: inherit;">AgriCoop</a>
+  </div>
+  
+  <!-- Membres -->
+  <a href="{{ route('memberPage') }}" 
+     style="font-size: 14px; text-decoration: none; padding: 10px 12px; border-radius: 8px; transition: all 0.2s;
+            color: {{ request.matchesRoute('memberPage') ? '#1a1a1a' : '#666666' }}; 
+            font-weight: {{ request.matchesRoute('memberPage') ? '600' : '500' }}; 
+            background-color: {{ request.matchesRoute('memberPage') ? '#f5f5f5' : 'transparent' }};"
+     onmouseover="if(!{{ request.matchesRoute('memberPage') }}) { this.style.color='#1a1a1a'; this.style.backgroundColor='#fafafa'; }" 
+     onmouseout="if(!{{ request.matchesRoute('memberPage') }}) { this.style.color='#666666'; this.style.backgroundColor='transparent'; }">
+    Membres
+  </a>
+  
+  <!-- Produits -->
+  <a href="{{ route('product.index') }}" 
+     style="font-size: 14px; text-decoration: none; padding: 10px 12px; border-radius: 8px; transition: all 0.2s;
+            color: {{ request.matchesRoute('productPage') ? '#1a1a1a' : '#666666' }}; 
+            font-weight: {{ request.matchesRoute('productPage') ? '600' : '500' }}; 
+            background-color: {{ request.matchesRoute('productPage') ? '#f5f5f5' : 'transparent' }};"
+     onmouseover="if(!{{ request.matchesRoute('productPage') }}) { this.style.color='#1a1a1a'; this.style.backgroundColor='#fafafa'; }" 
+     onmouseout="if(!{{ request.matchesRoute('productPage') }}) { this.style.color='#666666'; this.style.backgroundColor='transparent'; }">
+    Produits
+  </a>
+
+      <!-- Stocks -->
+  <a href="{{ route('stockPage') }}" 
+     style="font-size: 14px; text-decoration: none; padding: 10px 12px; border-radius: 8px; transition: all 0.2s;
+            color: {{ request.matchesRoute('stockPage') ? '#1a1a1a' : '#666666' }}; 
+            font-weight: {{ request.matchesRoute('stockPage') ? '600' : '500' }}; 
+            background-color: {{ request.matchesRoute('stockPage') ? '#f5f5f5' : 'transparent' }};"
+     onmouseover="if(!{{ request.matchesRoute('stockPage') }}) { this.style.color='#1a1a1a'; this.style.backgroundColor='#fafafa'; }" 
+     onmouseout="if(!{{ request.matchesRoute('stockPage') }}) { this.style.color='#666666'; this.style.backgroundColor='transparent'; }">
+    Stocks
+  </a>
+  
+  <!-- Activités -->
+  <a href="{{ route('activityPage') }}" 
+     style="font-size: 14px; text-decoration: none; padding: 10px 12px; border-radius: 8px; transition: all 0.2s;
+            color: {{ request.matchesRoute('activityPage') ? '#1a1a1a' : '#666666' }}; 
+            font-weight: {{ request.matchesRoute('activityPage') ? '600' : '500' }}; 
+            background-color: {{ request.matchesRoute('activityPage') ? '#f5f5f5' : 'transparent' }};"
+     onmouseover="if(!{{ request.matchesRoute('activityPage') }}) { this.style.color='#1a1a1a'; this.style.backgroundColor='#fafafa'; }" 
+     onmouseout="if(!{{ request.matchesRoute('activityPage') }}) { this.style.color='#666666'; this.style.backgroundColor='transparent'; }">
+    Activités
+  </a>
+  
+  <!-- Contributions -->
+  <a href="{{ route('contribution.index') }}" 
+     style="font-size: 14px; text-decoration: none; padding: 10px 12px; border-radius: 8px; transition: all 0.2s;
+            color: {{ request.matchesRoute('contributionsPage') ? '#1a1a1a' : '#666666' }}; 
+            font-weight: {{ request.matchesRoute('contributionsPage') ? '600' : '500' }}; 
+            background-color: {{ request.matchesRoute('contributionsPage') ? '#f5f5f5' : 'transparent' }};"
+     onmouseover="if(!{{ request.matchesRoute('contributionsPage') }}) { this.style.color='#1a1a1a'; this.style.backgroundColor='#fafafa'; }" 
+     onmouseout="if(!{{ request.matchesRoute('contributionsPage') }}) { this.style.color='#666666'; this.style.backgroundColor='transparent'; }">
+    Contributions
+  </a>
+
+
+
+  <!-- Espace flexible pour pousser la déconnexion vers le bas -->
+  <div style="flex-grow: 1;"></div>
+
+  @form({route:'session.destroy', method:'delete'}) 
+  <form>
+      <button>
+        Deconnexion
+      </button>
+  </form>
+    
+  @end
+
+</nav>
+

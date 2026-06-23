@@ -1,0 +1,86 @@
+@layout()
+<div style="display: flex; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #fafafa; min-height: 100vh; margin: 0; color: #1a1a1a;">
+  
+  <!-- BARRE LATÉRALE STYLISÉE (Onglet Activités Actif) -->
+  @include('partials/aside-navigation')
+
+  <!-- CONTENU PRINCIPAL -->
+  <div style="flex: 1; padding: 48px 56px; box-sizing: border-box; display: flex; flex-direction: column; gap: 40px;">
+    
+    <!-- En-tête -->
+    <div>
+      <h1 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.5px;">Journal d'activités</h1>
+      <p style="margin: 4px 0 0 0; font-size: 14px; color: #888888;">Historique en temps réel des actions de la coopérative</p>
+    </div>
+
+    <!-- PISTES DE FILTRES MINIMALISTES -->
+    <div style="display: flex; gap: 8px; border-bottom: 1px solid #f0f0f0; padding-bottom: 16px;">
+      <button style="background: #1a1a1a; color: #ffffff; border: none; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer;">Tout voir</button>
+      <button style="background: #ffffff; color: #666666; border: 1px solid #ececec; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='#1a1a1a'; this.style.color='#1a1a1a'">💰 Ventes</button>
+      <button style="background: #ffffff; color: #666666; border: 1px solid #ececec; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='#1a1a1a'; this.style.color='#1a1a1a'">📦 Stocks</button>
+      <button style="background: #ffffff; color: #666666; border: 1px solid #ececec; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='#1a1a1a'; this.style.color='#1a1a1a'">👥 Membres</button>
+    </div>
+
+    <!-- TIMELINE CONTAINER -->
+    <div style="background: #ffffff; border: 1px solid #ececec; padding: 40px; border-radius: 16px; display: flex; flex-direction: column; gap: 32px; position: relative;">
+      
+      <!-- Ligne verticale discrète en arrière-plan pour la frise -->
+      <div style="position: absolute; left: 51px; top: 56px; bottom: 56px; width: 1px; background-color: #f0f0f0; z-index: 1;"></div>
+
+      <!-- ÉLÉMENT 1 : Vente de produit (Flux Sortant) -->
+      <div style="display: flex; gap: 24px; align-items: flex-start; position: relative; z-index: 2;">
+        <span style="font-size: 13px; color: #888888; width: 45px; text-align: right; padding-top: 4px; font-weight: 500;">11:24</span>
+        <div style="background-color: #eaf5ff; color: #0066cc; width: 14px; height: 14px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 0 1px #0066cc; margin-top: 5px;"></div>
+        <div style="flex: 1;">
+          <h4 style="margin: 0; font-size: 14px; font-weight: 600; color: #1a1a1a;">Vente enregistrée</h4>
+          <p style="margin: 4px 0 0 0; font-size: 14px; color: #666666;">
+            <span style="font-weight: 600; color: #1a1a1a;">120 kg de Maïs</span> vendus à l'acheteur Grossiste littoral.
+          </p>
+          <div style="margin-top: 8px; font-size: 13px; font-weight: 600; color: #1a1a1a;">
+            +96 000 <span style="font-size: 10px; color: #888888; font-weight: 500;">FCFA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ÉLÉMENT 2 : Ajout / Approvisionnement Stock -->
+      <div style="display: flex; gap: 24px; align-items: flex-start; position: relative; z-index: 2;">
+        <span style="font-size: 13px; color: #888888; width: 45px; text-align: right; padding-top: 4px; font-weight: 500;">09:15</span>
+        <div style="background-color: #eafaf1; color: #10b981; width: 14px; height: 14px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 0 1px #10b981; margin-top: 5px;"></div>
+        <div style="flex: 1;">
+          <h4 style="margin: 0; font-size: 14px; font-weight: 600; color: #1a1a1a;">Nouvel arrivage de stock</h4>
+          <p style="margin: 4px 0 0 0; font-size: 14px; color: #666666;">
+            Dépôt de <span style="font-weight: 600; color: #1a1a1a;">45 sacs d'Engrais NPK</span> par le fournisseur. Répartis dans le hangar central.
+          </p>
+          <span style="display: inline-block; margin-top: 6px; background-color: #f5f5f5; color: #666666; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500;">Par: Bureau technique</span>
+        </div>
+      </div>
+
+      <!-- ÉLÉMENT 3 : Nouveau Membre -->
+      <div style="display: flex; gap: 24px; align-items: flex-start; position: relative; z-index: 2;">
+        <span style="font-size: 13px; color: #888888; width: 45px; text-align: right; padding-top: 4px; font-weight: 500;">Hier</span>
+        <div style="background-color: #f5f5f5; color: #1a1a1a; width: 14px; height: 14px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 0 1px #a0a0a0; margin-top: 5px;"></div>
+        <div style="flex: 1;">
+          <h4 style="margin: 0; font-size: 14px; font-weight: 600; color: #1a1a1a;">Adhésion validée</h4>
+          <p style="margin: 4px 0 0 0; font-size: 14px; color: #666666;">
+            <span style="font-weight: 600; color: #1a1a1a;">Samuel Etoa</span> a rejoint officiellement la coopérative en tant que producteur (Secteur Penja).
+          </p>
+        </div>
+      </div>
+
+      <!-- ÉLÉMENT 4 : Modification de prix ou fiche produit -->
+      <div style="display: flex; gap: 24px; align-items: flex-start; position: relative; z-index: 2;">
+        <span style="font-size: 13px; color: #888888; width: 45px; text-align: right; padding-top: 4px; font-weight: 500;">22 Juin</span>
+        <div style="background-color: #fff9eb; color: #f59e0b; width: 14px; height: 14px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 0 1px #f59e0b; margin-top: 5px;"></div>
+        <div style="flex: 1;">
+          <h4 style="margin: 0; font-size: 14px; font-weight: 600; color: #1a1a1a;">Fiche produit modifiée</h4>
+          <p style="margin: 4px 0 0 0; font-size: 14px; color: #666666;">
+            Mise à jour du prix unitaire pour le <span style="font-weight: 600; color: #1a1a1a;">Manioc Émincé</span> (Passé de 450 FCFA à 500 FCFA/kg).
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+@end

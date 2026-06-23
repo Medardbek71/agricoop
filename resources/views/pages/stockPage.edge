@@ -1,0 +1,94 @@
+@layout()
+<div style="display: flex; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #fafafa; min-height: 100vh; margin: 0; color: #1a1a1a;">
+  
+  <!-- BARRE LATÉRALE STYLISÉE -->
+  @include('partials/aside-navigation')
+
+  <!-- CONTENU PRINCIPAL -->
+  <div style="flex: 1; padding: 48px 56px; box-sizing: border-box; display: flex; flex-direction: column; gap: 40px;">
+    
+    <!-- En-tête avec bouton d'ajustement -->
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h1 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.5px;">Inventaire & Stocks</h1>
+        <p style="margin: 4px 0 0 0; font-size: 14px; color: #888888;">Suivez les volumes disponibles, les emplacements et les alertes de réapprovisionnement</p>
+      </div>
+     
+    </div>
+
+    <!-- METRIQUES DE STOCK -->
+    <div style="display: flex; gap: 20px; width: 100%;">
+      <div style="flex: 1; background: #ffffff; border: 1px solid #ececec; padding: 20px; border-radius: 12px;">
+        <span style="color: #888888; font-size: 12px; font-weight: 600; text-transform: uppercase;">Volume Total Stocké</span>
+        <div style="font-size: 24px; font-weight: 600; margin-top: 8px;">14.2 <span style="font-size: 14px; color: #888888; font-weight: 500;">Tonnes</span></div>
+      </div>
+      <div style="flex: 1; background: #ffffff; border: 1px solid #ececec; padding: 20px; border-radius: 12px;">
+        <span style="color: #888888; font-size: 12px; font-weight: 600; text-transform: uppercase;">Entrées (Ce mois)</span>
+        <div style="font-size: 24px; font-weight: 600; margin-top: 8px; color: #10b981;">+3.5 <span style="font-size: 14px; font-weight: 500;">T</span></div>
+      </div>
+      <div style="flex: 1; background: #ffffff; border: 1px solid #ececec; padding: 20px; border-radius: 12px;">
+        <span style="color: #888888; font-size: 12px; font-weight: 600; text-transform: uppercase;">Alertes Seuil Critique</span>
+        <div style="font-size: 24px; font-weight: 600; margin-top: 8px; color: #df1c1c;">2 Articles</div>
+      </div>
+    </div>
+
+    <!-- TABLEAU DE GESTION DES STOCKS -->
+    <div style="background: #ffffff; border: 1px solid #ececec; padding: 32px; border-radius: 16px;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <th style="padding-bottom: 16px; color: #888888; font-weight: 500; font-size: 13px; width: 30%;">Article / Intrant</th>
+            <th style="padding-bottom: 16px; color: #888888; font-weight: 500; font-size: 13px; width: 20%;">Emplacement</th>
+            <th style="padding-bottom: 16px; color: #888888; font-weight: 500; font-size: 13px; width: 20%; text-align: right;">Quantité en Stock</th>
+            <th style="padding-bottom: 16px; color: #888888; font-weight: 500; font-size: 13px; width: 15%; text-align: right;">Seuil Alerte</th>
+            <th style="padding-bottom: 16px; color: #888888; font-weight: 500; font-size: 13px; width: 15%; text-align: right;">Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Ligne 1 : Stock Correct -->
+          <tr style="border-bottom: 1px solid #fcfcfc;">
+            <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; font-weight: 600;">Maïs Blanc (Sacs de 50kg)</td>
+            <td style="padding: 18px 0; color: #666666; font-size: 14px;">Hangar Central - Zone A</td>
+            <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; text-align: right; font-weight: 600;">180 <span style="font-size: 11px; color:#888888; font-weight:500;">sacs</span></td>
+            <td style="padding: 18px 0; color: #888888; font-size: 13px; text-align: right;">40 sacs</td>
+            <td style="padding: 18px 0; text-align: right;">
+              <span style="background-color: #eafaf1; color: #10b981; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Optimal</span>
+            </td>
+          </tr>
+          <!-- Ligne 2 : Stock Correct -->
+          <tr style="border-bottom: 1px solid #fcfcfc;">
+            <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; font-weight: 600;">Engrais NPK 20-10-10</td>
+            <td style="padding: 18px 0; color: #666666; font-size: 14px;">Dépôt Intrants</td>
+            <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; text-align: right; font-weight: 600;">95 <span style="font-size: 11px; color:#888888; font-weight:500;">sacs</span></td>
+            <td style="padding: 18px 0; color: #888888; font-size: 13px; text-align: right;">20 sacs</td>
+            <td style="padding: 18px 0; text-align: right;">
+              <span style="background-color: #eafaf1; color: #10b981; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Optimal</span>
+            </td>
+          </tr>
+          <!-- Ligne 3 : Seuil critique atteint -->
+          <tr style="border-bottom: 1px solid #fcfcfc;">
+            <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; font-weight: 600;">Semences de Cacao (Haute qualité)</td>
+            <td style="padding: 18px 0; color: #666666; font-size: 14px;">Silo Nord - Tempéré</td>
+            <td style="padding: 18px 0; color: #df1c1c; font-size: 14px; text-align: right; font-weight: 600;">12 <span style="font-size: 11px; color:#df1c1c; font-weight:500;">kg</span></td>
+            <td style="padding: 18px 0; color: #888888; font-size: 13px; text-align: right;">30 kg</td>
+            <td style="padding: 18px 0; text-align: right;">
+              <span style="background-color: #fde8e8; color: #df1c1c; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Bas niveau</span>
+            </td>
+          </tr>
+          <!-- Ligne 4 : Rupture totale -->
+          <tr>
+            <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; font-weight: 600;">Copeaux de bois (Paillage)</td>
+            <td style="padding: 18px 0; color: #666666; font-size: 14px;">Hangar Central - Zone B</td>
+            <td style="padding: 18px 0; color: #888888; font-size: 14px; text-align: right; font-weight: 600;">0 <span style="font-size: 11px; color:#888888; font-weight:500;">m³</span></td>
+            <td style="padding: 18px 0; color: #888888; font-size: 13px; text-align: right;">5 m³</td>
+            <td style="padding: 18px 0; text-align: right;">
+              <span style="background-color: #f5f5f5; color: #666666; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Épuisé</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+@end
