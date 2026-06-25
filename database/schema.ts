@@ -27,14 +27,18 @@ export class ContributionSchema extends BaseModel {
 }
 
 export class MemberSchema extends BaseModel {
-  static $columns = ['createdAt', 'fullName', 'id', 'updatedAt'] as const
+  static $columns = ['createdAt', 'firstName', 'id', 'lastName', 'phone', 'updatedAt'] as const
   $columns = MemberSchema.$columns
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime | null
   @column()
-  declare fullName: string | null
+  declare firstName: string | null
   @column({ isPrimary: true })
   declare id: number
+  @column()
+  declare lastName: string | null
+  @column()
+  declare phone: string | null
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 }

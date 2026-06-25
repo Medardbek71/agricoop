@@ -14,7 +14,6 @@ import router from '@adonisjs/core/services/router'
 
 router.group(()=>{
   router.get('/',[controllers.Navigations,'index']).as('home')
-  router.get('members',[controllers.Navigations,'memberPage']).as('memberPage')
   router.get('products',[controllers.Navigations,'productPage']).as('productPage')
   router.get('activity',[controllers.Navigations,'activityPage']).as('activityPage')
   router.get('contributions',[controllers.Navigations,'contributionPage']).as('contributionsPage')
@@ -31,8 +30,10 @@ router.group(()=>{
   }).prefix('product').as('product')
 
   router.group(()=>{
-    router.get('index',[controllers.Navigations,'index']).as('index')
+    router.get('index',[controllers.Navigations,'memberList']).as('index')
     router.get('add',[controllers.Navigations,'addMember']).as('add')
+    router.post('handle',[controllers.Navigations,'handleAddMember']).as('handleAdd')
+    router.delete('delete/:id',[controllers.Navigations,'deleteMember']).as('delete')
   }).prefix('member').as('member')
 
 }).use(middleware.auth())
