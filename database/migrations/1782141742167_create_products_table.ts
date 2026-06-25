@@ -10,7 +10,8 @@ export default class extends BaseSchema {
       table.integer('quantity')
       table.integer('owner_id')
       table.boolean('available')
-
+      table.integer('price')
+      table.integer('alert_stock')
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

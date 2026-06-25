@@ -14,39 +14,30 @@
     </div>
 
     <div style="background: #ffffff; border: 1px solid #ececec; padding: 40px; border-radius: 16px;">
-      <form action="{{ route('productPage') }}" method="POST" style="display: flex; flex-direction: column; gap: 28px;">
+      <form action="{{ route('product.handleAdd') }}" method="POST" style="display: flex; flex-direction: column; gap: 28px;">
         {{ csrfField() }}
-
         <div>
           <h2 style="margin: 0 0 20px 0; font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888888;">Identification de la ressource</h2>
           
           <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
-            <label align="left" for="product_name" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Désignation / Nom du produit</label>
+            <label for="product_name" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Désignation / Nom du produit</label>
             <input type="text" id="product_name" name="name" required placeholder="Ex: Poivre Noir de Penja, Café Arabica..." style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'">
           </div>
 
-          <div style="display: flex; gap: 20px;">
-            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-              <label for="category" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Catégorie</label>
-              <select id="category" name="category" required style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; height: 45px; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'">
-                <option value="" disabled selected>Sélectionner une catégorie</option>
-                <option value="rente">Culture de rente (Cacao, Café...)</option>
-                <option value="vivrier">Culture vivrière (Maïs, Manioc...)</option>
-                <option value="maraicher">Culture maraîchère</option>
-                <option value="intrant">Intrant agricole (Engrais, Semences...)</option>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+            <label for="member_id" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Propriétaire du produit</label>
+            <div style="position: relative; width: 100%;">
+              <select id="owner_id" name="owner_id" required style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; transition: border-color 0.2s; -webkit-appearance: none; -moz-appearance: none; appearance: none; cursor: pointer;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'">
+                <option value="" disabled selected>-- Sélectionner le producteur ou adhérent --</option>
+                @if(members)
+                  @each(member in members)
+                    <option value={{ member.id }}>{{ member.firstName }} {{ member.lastName }}</option>
+                  @end
+                @else
+                  <p>Aucun membre trouvé. Veuillez ajouter des membres avant de créer un produit.</p>
+                @endif
               </select>
-            </div>
-            
-            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-              <label for="unit" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Unité de mesure</label>
-              <select id="unit" name="unit" required style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; height: 45px; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'">
-                <option value="" disabled selected>Unité de conditionnement</option>
-                <option value="kg">Kilogramme (Kg)</option>
-                <option value="sac_50">Sac de 50 Kg</option>
-                <option value="tonne">Tonne (T)</option>
-                <option value="litre">Litre (L)</option>
-                <option value="cagette">Cagette</option>
-              </select>
+              <div style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #666666; font-size: 12px;">▼</div>
             </div>
           </div>
         </div>
@@ -61,6 +52,11 @@
               <label for="price" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Prix unitaire par défaut (FCFA)</label>
               <input type="number" id="price" name="price" min="0" required placeholder="Ex: 2500" style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'">
             </div>
+
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+              <label for="quantity" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Quantité</label>
+              <input type="number" id="quantity" name="quantity" min="0" required placeholder="Ex: 3" style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'">
+            </div>
             
             <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
               <label for="alert_stock" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Seuil d'alerte critique (Alerte Stock)</label>
@@ -70,7 +66,7 @@
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px;">
-          <a href="{{ route('productPage') }}" style="background-color: transparent; color: #666666; border: 1px solid #ececec; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 500; text-decoration: none; text-align: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fafafa'; this.style.color='#1a1a1a';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#666666';">
+          <a href="{{ route('product.index') }}" style="background-color: transparent; color: #666666; border: 1px solid #ececec; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 500; text-decoration: none; text-align: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fafafa'; this.style.color='#1a1a1a';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#666666';">
             Annuler
           </a>
           <button type="submit" style="background-color: #1a1a1a; color: #ffffff; border: none; padding: 12px 28px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#333333'" onmouseout="this.style.backgroundColor='#1a1a1a'">

@@ -44,8 +44,10 @@ export class MemberSchema extends BaseModel {
 }
 
 export class ProductSchema extends BaseModel {
-  static $columns = ['available', 'createdAt', 'id', 'name', 'ownerId', 'quantity', 'updatedAt'] as const
+  static $columns = ['alertStock', 'available', 'createdAt', 'id', 'name', 'ownerId', 'price', 'quantity', 'updatedAt'] as const
   $columns = ProductSchema.$columns
+  @column()
+  declare alertStock: number | null
   @column()
   declare available: boolean | null
   @column.dateTime({ autoCreate: true })
@@ -56,6 +58,8 @@ export class ProductSchema extends BaseModel {
   declare name: string | null
   @column()
   declare ownerId: number | null
+  @column()
+  declare price: number | null
   @column()
   declare quantity: number | null
   @column.dateTime({ autoCreate: true, autoUpdate: true })

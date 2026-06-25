@@ -1,0 +1,78 @@
+@layout()
+<div style="display: flex; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #fafafa; min-height: 100vh; margin: 0; color: #1a1a1a;">
+  
+  @include('partials/aside-navigation')
+  
+  <div style="flex: 1; padding: 48px 56px; box-sizing: border-box; display: flex; flex-direction: column; gap: 40px; max-width: 800px;">
+    
+    <div>
+      <a href="{{ route('product.index') }}" style="display: inline-flex; align-items: center; gap: 6px; color: #666666; text-decoration: none; font-size: 14px; margin-bottom: 16px; font-weight: 500; transition: color 0.2s;" onmouseover="this.style.color='#1a1a1a'" onmouseout="this.style.color='#666666'">
+        ← Retour au catalogue
+      </a>
+      <h1 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.5px;">Enregistrer une nouvelle vente</h1>
+      <p style="margin: 4px 0 0 0; font-size: 14px; color: #888888;">Ajoutez une transaction et mettez automatiquement à jour vos stocks</p>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #ececec; padding: 40px; border-radius: 16px;">
+      <form action="{{ route('product.handleSell') }}" method="POST" style="display: flex; flex-direction: column; gap: 28px;">
+        {{ csrfField() }}
+
+        <div>
+          <h2 style="margin: 0 0 20px 0; font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888888;">Détails de la vente</h2>
+          
+          <!-- Sélection du produit -->
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+            <label for="product_id" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Sélectionner le produit</label>
+            <select id="product_id" name="product_id" required
+              style="width: 100%; background: #ffffff; border: 1px solid {{ flashMessages.has('errorsBag.product_id') ? '#dc2626' : '#ececec' }}; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; appearance: none; transition: border-color 0.2s;"
+              onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='{{ flashMessages.has('errorsBag.product_id') ? '#dc2626' : '#ececec' }}'">
+              <option value="" disabled selected>-- Choisir un article --</option>
+              
+              <!-- Boucle pour les produits à adapter selon vos variables (Exemple standard) -->
+              @if(products)
+                @each(product in products)
+                  <option value="{{ product.id }}" {{ old('product_id') == product.id ? 'selected' : '' }}>
+                    {{ product.name }} </option>
+                @end
+              @else
+                  <p>Ajouter des produits svp</p>
+              @endif
+            </select>
+
+            @if(flashMessages.has('errorsBag.product_id'))
+              <span style="color: #dc2626; font-size: 12px; font-weight: 500;">{{ flashMessages.get('errorsBag.product_id')[0] }}</span>
+            @endif
+          </div>
+
+          <!-- Ligne Quantité et Prix Unitaire -->
+          <div style="display: flex; gap: 20px;">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+              <label for="quantity" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Quantité vendue</label>
+              <input type="number" id="quantity" name="quantity" min="1" required 
+                placeholder="Ex: 5" 
+                value="{{ old('quantity') || '' }}"
+                style="width: 100%; background: #ffffff; border: 1px solid {{ flashMessages.has('errorsBag.quantity') ? '#dc2626' : '#ececec' }}; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" 
+                onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='{{ flashMessages.has('errorsBag.quantity') ? '#dc2626' : '#ececec' }}'">
+              
+              @if(flashMessages.has('errorsBag.quantity'))
+                <span style="color: #dc2626; font-size: 12px; font-weight: 500;">{{ flashMessages.get('errorsBag.quantity')[0] }}</span>
+              @endif
+            </div>
+          </div>
+        </div>
+
+        <!-- Boutons d'actions -->
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px;">
+          <a href="{{ route('product.index') }}" style="background-color: transparent; color: #666666; border: 1px solid #ececec; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 500; text-decoration: none; text-align: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fafafa'; this.style.color='#1a1a1a';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#666666';">
+            Annuler
+          </a>
+          <button type="submit" style="background-color: #1a1a1a; color: #ffffff; border: none; padding: 12px 28px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#333333'" onmouseout="this.style.backgroundColor='#1a1a1a'">
+            Enregistrer la vente
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+@end

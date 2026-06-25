@@ -27,6 +27,9 @@ router.group(()=>{
   router.group(()=>{
     router.get('index',[controllers.Navigations,'productList']).as('index')
     router.get('add',[controllers.Navigations,'addProduct']).as('add')
+    router.get('addSell',[controllers.Navigations,"addSell"]).as('addSell')
+    router.post('handle',[controllers.Navigations,'handleAddProduct']).as('handleAdd')
+    router.post('handleSell',[controllers.Navigations,'handleAddSell']).as('handleSell')
   }).prefix('product').as('product')
 
   router.group(()=>{
