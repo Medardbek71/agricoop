@@ -1,105 +1,282 @@
 @layout()
-<div style="display: flex; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #fafafa; min-height: 100vh; margin: 0; color: #1a1a1a;">
-  
-  <!-- BARRE LATÉRALE STYLISÉE (Onglet Contributions Actif) -->
-    @include('partials/aside-navigation')
+<style>
+  .action-card-btn {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a1a;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .action-card-btn:hover {
+    border-color: #1a1a1a;
+    background-color: #f9fafb;
+    transform: translateY(-1px);
+  }
+  .settings-input {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #1a1a1a;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .settings-input:focus {
+    border-color: #1a1a1a;
+  }
+  /* STYLES DES MINI-MOIS DU CALENDRIER */
+  .mini-calendar {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+  }
+  .month-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+  }
+  .month-paid {
+    background-color: #ecfdf5;
+    color: #10b981;
+    border-color: #a7f3d0;
+  }
+  .month-late {
+    background-color: #fde8e8;
+    color: #df1c1c;
+    border-color: #fca5a5;
+  }
+  .month-empty {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+  }
+</style>
 
-  <!-- CONTENU PRINCIPAL -->
-  <div style="flex: 1; padding: 48px 56px; box-sizing: border-box; display: flex; flex-direction: column; gap: 40px;">
+<div style="display: flex; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; min-height: 100vh; margin: 0; color: #1a1a1a;">
+  
+  @include('partials/aside-navigation')
+
+  <div style="flex: 1; padding: 48px 56px; box-sizing: border-box; display: flex; flex-direction: column; gap: 32px; max-width: 1250px; margin: 0 auto; width: 100%;">
     
-    <!-- En-tête avec bouton Enregistrer -->
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <div>
-        <h1 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -0.5px;">Cotisations & Fonds</h1>
-        <p style="margin: 4px 0 0 0; font-size: 14px; color: #888888;">Suivi des apports financiers et obligations des membres</p>
+        <h1 style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.5px;">Cotisations & Fonds</h1>
+        <p style="margin: 4px 0 0 0; font-size: 14px; color: #64748b;">Suivi des apports financiers et obligations des membres</p>
       </div>
       
-      {{-- <button style="display: flex; align-items: center; gap: 8px; background-color: #1a1a1a; color: #ffffff; border: none; padding: 10px 18px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 0.2s;"
-              onmouseover="this.style.backgroundColor='#333333'" 
-              onmouseout="this.style.backgroundColor='#1a1a1a'">
-        <span>+</span> Enregistrer un paiement --}}
-   
-      {{-- </button> --}}
-            <a href="{{route('contribution.add')}}">
-      @!button({ text:'Ajouter une cotisation', type: 'submit' })
+      <a href="{{ route('contribution.add') }}" style="text-decoration: none;">
+        @!button({ text: 'Ajouter une cotisation', type: 'submit' })
       </a>
     </div>
 
-    <!-- MINI-RÉSUMÉ STATISTIQUE (Bento Grid léger) -->
-    <div style="display: flex; gap: 20px; width: 100%;">
-      <div style="flex: 1; background: #ffffff; border: 1px solid #ececec; padding: 20px; border-radius: 12px;">
-        <span style="color: #888888; font-size: 12px; font-weight: 600; text-transform: uppercase;">Collecté (Mois en cours)</span>
-        <div style="font-size: 24px; font-weight: 600; margin-top: 8px;">450 000 <span style="font-size: 12px; color: #888888; font-weight: 500;">FCFA</span></div>
+    <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #e2e8f0; padding: 16px 24px; border-radius: 12px; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Rapports :</span>
+        <a href="#" class="action-card-btn">
+          <span>📊</span> Télécharger le bilan (PDF)
+        </a>
+        <a href="#" class="action-card-btn">
+          <span> Excel </span> Exporter la liste (.xlsx)
+        </a>
       </div>
-      <div style="flex: 1; background: #ffffff; border: 1px solid #ececec; padding: 20px; border-radius: 12px;">
-        <span style="color: #888888; font-size: 12px; font-weight: 600; text-transform: uppercase;">Taux de participation</span>
-        <div style="font-size: 24px; font-weight: 600; margin-top: 8px; color: #10b981;">82%</div>
-      </div>
-      <div style="flex: 1; background: #ffffff; border: 1px solid #ececec; padding: 20px; border-radius: 12px;">
-        <span style="color: #888888; font-size: 12px; font-weight: 600; text-transform: uppercase;">Retards constatés</span>
-        <div style="font-size: 24px; font-weight: 600; margin-top: 8px; color: #df1c1c;">5 membres</div>
+      
+      <div>
+        <a href="#settings-section" class="action-card-btn" style="border-color: #cbd5e1; background: #f8fafc;">
+          <span>⚙️</span> Configurer les montants
+        </a>
       </div>
     </div>
 
-    <!-- TABLEAU DE SUIVI DES COTISATIONS -->
-    <div style="background: #ffffff; border: 1px solid #ececec; padding: 32px; border-radius: 16px;">
-      <div style="margin-bottom: 24px;">
-        <h2 style="margin: 0; font-size: 16px; font-weight: 600;">Registre des versements</h2>
+    <div style="display: flex; gap: 20px; width: 100%;">
+      <div style="flex: 1; background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px;">
+        <span style="color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase;">Collecté (Mois en cours)</span>
+        <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">450 000 <span style="font-size: 12px; color: #64748b; font-weight: 500;">FCFA</span></div>
       </div>
+      <div style="flex: 1; background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px;">
+        <span style="color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase;">Taux de participation</span>
+        <div style="font-size: 24px; font-weight: 700; margin-top: 8px; color: #10b981;">82%</div>
+      </div>
+      <div style="flex: 1; background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px;">
+        <span style="color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase;">Retards constatés</span>
+        <div style="font-size: 24px; font-weight: 700; margin-top: 8px; color: #df1c1c;">5 membres</div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 24px; align-items: flex-start; width: 100%;">
       
-      <table style="width: 100%; border-collapse: collapse; text-align: left;">
-        <thead>
-          <tr style="border-bottom: 1px solid #f0f0f0;">
-            <th style="padding-bottom: 16px; color: #888888; font-weight: 500; font-size: 13px; width: 30%;">Membre</th>
-            <th style="padding-bottom: 16px; color: #888888; font-weight: 500; font-size: 13px; width: 25%;">Type de Fond</th>
-            <th style="padding-bottom: 16px; color: #888888; font-weight: 500; font-size: 13px; width: 15%;">Période</th>
-            <th style="padding-bottom: 16px; color: #888888; font-weight: 500; font-size: 13px; width: 15%; text-align: right;">Montant</th>
-            <th style="padding-bottom: 16px; color: #888888; font-weight: 500; font-size: 13px; width: 15%; text-align: right;">Statut</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Ligne 1 : Payé -->
-          <tr style="border-bottom: 1px solid #fcfcfc;">
-            <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; font-weight: 600;">Jean Dupont</td>
-            <td style="padding: 18px 0; color: #666666; font-size: 14px;">Cotisation Mensuelle</td>
-            <td style="padding: 18px 0; color: #666666; font-size: 13px;">Juin 2026</td>
-            <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; text-align: right; font-weight: 600;">10 000 <span style="font-size: 11px; color:#888888; font-weight:500;">FCFA</span></td>
-            <td style="padding: 18px 0; text-align: right;">
-              <span style="background-color: #eafaf1; color: #10b981; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Réglé</span>
-            </td>
-          </tr>
-          <!-- Ligne 2 : Payé -->
-          <tr style="border-bottom: 1px solid #fcfcfc;">
-            <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; font-weight: 600;">Marie Kone</td>
-            <td style="padding: 18px 0; color: #666666; font-size: 14px;">Fonds de roulement Matériel</td>
-            <td style="padding: 18px 0; color: #666666; font-size: 13px;">Unique</td>
-            <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; text-align: right; font-weight: 600;">25 000 <span style="font-size: 11px; color:#888888; font-weight:500;">FCFA</span></td>
-            <td style="padding: 18px 0; text-align: right;">
-              <span style="background-color: #eafaf1; color: #10b981; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Réglé</span>
-            </td>
-          </tr>
-          <!-- Ligne 3 : En attente / Retard -->
-          <tr style="border-bottom: 1px solid #fcfcfc;">
-            <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; font-weight: 600;">Samuel Etoa</td>
-            <td style="padding: 18px 0; color: #666666; font-size: 14px;">Droit d'adhésion</td>
-            <td style="padding: 18px 0; color: #666666; font-size: 13px;">Entrant</td>
-            <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; text-align: right; font-weight: 600;">15 000 <span style="font-size: 11px; color:#888888; font-weight:500;">FCFA</span></td>
-            <td style="padding: 18px 0; text-align: right;">
-              <span style="background-color: #fff9eb; color: #f59e0b; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">En attente</span>
-            </td>
-          </tr>
-          <!-- Ligne 4 : Impayé -->
-          <tr>
-            <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; font-weight: 600;">Michel Tchakounté</td>
-            <td style="padding: 18px 0; color: #666666; font-size: 14px;">Cotisation Mensuelle</td>
-            <td style="padding: 18px 0; color: #666666; font-size: 13px;">Mai 2026</td>
-            <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; text-align: right; font-weight: 600;">10 000 <span style="font-size: 11px; color:#888888; font-weight:500;">FCFA</span></td>
-            <td style="padding: 18px 0; text-align: right;">
-              <span style="background-color: #fde8e8; color: #df1c1c; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">En retard</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="flex: 2.3; background: #ffffff; border: 1px solid #e2e8f0; padding: 32px; border-radius: 16px; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);">
+        <div style="margin-bottom: 24px;">
+          <h2 style="margin: 0; font-size: 16px; font-weight: 600;">Registre des versements et calendrier annuel</h2>
+        </div>
+        
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead>
+            <tr style="border-bottom: 1px solid #f0f0f0;">
+              <th style="padding-bottom: 16px; color: #64748b; font-weight: 500; font-size: 13px; width: 45%;">Membre & Historique 2026</th>
+              {{-- <th style="padding-bottom: 16px; color: #64748b; font-weight: 500; font-size: 13px; width: 20%;">Type de Fond</th> --}}
+              <th style="padding-bottom: 16px; color: #64748b; font-weight: 500; font-size: 13px; width: 20%; text-align: right;">Dernier Montant</th>
+              <th style="padding-bottom: 16px; color: #64748b; font-weight: 500; font-size: 13px; width: 15%; text-align: right;">Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr style="border-bottom: 1px solid #f8fafc;">
+              <td style="padding: 18px 0;">
+                <div style="color: #1a1a1a; font-size: 14px; font-weight: 600;">Jean Dupont</div>
+                <div class="mini-calendar">
+                  <div class="month-dot month-paid" title="Janvier : Payé">J</div>
+                  <div class="month-dot month-paid" title="Février : Payé">F</div>
+                  <div class="month-dot month-paid" title="Mars : Payé">M</div>
+                  <div class="month-dot month-paid" title="Avril : Payé">A</div>
+                  <div class="month-dot month-paid" title="Mai : Payé">M</div>
+                  <div class="month-dot month-paid" title="Juin : Payé">J</div>
+                  <div class="month-dot month-empty">J</div>
+                  <div class="month-dot month-empty">A</div>
+                  <div class="month-dot month-empty">S</div>
+                  <div class="month-dot month-empty">O</div>
+                  <div class="month-dot month-empty">N</div>
+                  <div class="month-dot month-empty">D</div>
+                </div>
+              </td>
+              {{-- <td style="padding: 18px 0; color: #475569; font-size: 14px; vertical-align: top;">Cotisation Mensuelle</td> --}}
+              <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; text-align: right; font-weight: 600; vertical-align: top;">10 000 <span style="font-size: 11px; color:#64748b;">FCFA</span><br><span style="font-size:11px; font-weight:400; color:#888888;">Juin 2026</span></td>
+              <td style="padding: 18px 0; text-align: right; vertical-align: top;">
+                <span style="background-color: #ecfdf5; color: #10b981; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Réglé</span>
+              </td>
+            </tr>
+
+            <tr style="border-bottom: 1px solid #f8fafc;">
+              <td style="padding: 18px 0;">
+                <div style="color: #1a1a1a; font-size: 14px; font-weight: 600;">Marie Kone</div>
+                <div class="mini-calendar">
+                  <div class="month-dot month-paid">J</div>
+                  <div class="month-dot month-paid">F</div>
+                  <div class="month-dot month-paid">M</div>
+                  <div class="month-dot month-paid">A</div>
+                  <div class="month-dot month-paid">M</div>
+                  <div class="month-dot month-paid">J</div>
+                  <div class="month-dot month-empty">J</div>
+                  <div class="month-dot month-empty">A</div>
+                  <div class="month-dot month-empty">S</div>
+                  <div class="month-dot month-empty">O</div>
+                  <div class="month-dot month-empty">N</div>
+                  <div class="month-dot month-empty">D</div>
+                </div>
+              </td>
+              {{-- <td style="padding: 18px 0; color: #475569; font-size: 14px; vertical-align: top;">Fonds Matériel</td> --}}
+              <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; text-align: right; font-weight: 600; vertical-align: top;">25 000 <span style="font-size: 11px; color:#64748b;">FCFA</span><br><span style="font-size:11px; font-weight:400; color:#888888;">Unique</span></td>
+              <td style="padding: 18px 0; text-align: right; vertical-align: top;">
+                <span style="background-color: #ecfdf5; color: #10b981; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Réglé</span>
+              </td>
+            </tr>
+
+            <tr style="border-bottom: 1px solid #f8fafc;">
+              <td style="padding: 18px 0;">
+                <div style="color: #1a1a1a; font-size: 14px; font-weight: 600;">Samuel Etoa</div>
+                <div class="mini-calendar">
+                  <div class="month-dot month-empty">J</div>
+                  <div class="month-dot month-empty">F</div>
+                  <div class="month-dot month-empty">M</div>
+                  <div class="month-dot month-empty">A</div>
+                  <div class="month-dot month-empty">M</div>
+                  <div class="month-dot month-empty">J</div>
+                  <div class="month-dot month-empty">J</div>
+                  <div class="month-dot month-empty">A</div>
+                  <div class="month-dot month-empty">S</div>
+                  <div class="month-dot month-empty">O</div>
+                  <div class="month-dot month-empty">N</div>
+                  <div class="month-dot month-empty">D</div>
+                </div>
+              </td>
+              {{-- <td style="padding: 18px 0; color: #475569; font-size: 14px; vertical-align: top;">Droit d'adhésion</td> --}}
+              <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; text-align: right; font-weight: 600; vertical-align: top;">15 000 <span style="font-size: 11px; color:#64748b;">FCFA</span><br><span style="font-size:11px; font-weight:400; color:#888888;">Entrant</span></td>
+              <td style="padding: 18px 0; text-align: right; vertical-align: top;">
+                <span style="background-color: #fff9eb; color: #f59e0b; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">En attente</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding: 18px 0;">
+                <div style="color: #1a1a1a; font-size: 14px; font-weight: 600;">Michel Tchakounté</div>
+                <div class="mini-calendar">
+                  <div class="month-dot month-paid">J</div>
+                  <div class="month-dot month-paid">F</div>
+                  <div class="month-dot month-paid">M</div>
+                  <div class="month-dot month-paid">A</div>
+                  <div class="month-dot month-late" title="Mai : Retard">M</div>
+                  <div class="month-dot month-late" title="Juin : Retard">J</div>
+                  <div class="month-dot month-empty">J</div>
+                  <div class="month-dot month-empty">A</div>
+                  <div class="month-dot month-empty">S</div>
+                  <div class="month-dot month-empty">O</div>
+                  <div class="month-dot month-empty">N</div>
+                  <div class="month-dot month-empty">D</div>
+                </div>
+              </td>
+              {{-- <td style="padding: 18px 0; color: #475569; font-size: 14px; vertical-align: top;">Cotisation Mensuelle</td> --}}
+              <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; text-align: right; font-weight: 600; vertical-align: top;">10 000 <span style="font-size: 11px; color:#64748b;">FCFA</span><br><span style="font-size:11px; font-weight:400; color:#df1c1c;">Mai 2026</span></td>
+              <td style="padding: 18px 0; text-align: right; vertical-align: top;">
+                <span style="background-color: #fde8e8; color: #df1c1c; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">En retard</span>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <div id="settings-section" style="flex: 1; background: #ffffff; border: 1px solid #e2e8f0; padding: 24px; border-radius: 16px; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05); position: sticky; top: 24px;">
+        <h2 style="margin: 0 0 6px 0; font-size: 16px; font-weight: 600; color: #0f172a;">⚙️ Configuration</h2>
+        <p style="margin: 0 0 20px 0; font-size: 13px; color: #64748b;">Modifiez les exigences financières de la coopérative</p>
+        
+        <form action="#" method="POST" style="display: flex; flex-direction: column; gap: 16px;">
+          <div>
+            <label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;">Cotisation Mensuelle</label>
+            <div style="position: relative; display: flex; align-items: center;">
+              <input type="number" class="settings-input" value="10000" style="padding-right: 55px;">
+              <span style="position: absolute; right: 12px; font-size: 11px; font-weight: 600; color: #64748b;">FCFA</span>
+            </div>
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;">Frais d'Adhésion Unique</label>
+            <div style="position: relative; display: flex; align-items: center;">
+              <input type="number" class="settings-input" value="15000" style="padding-right: 55px;">
+              <span style="position: absolute; right: 12px; font-size: 11px; font-weight: 600; color: #64748b;">FCFA</span>
+            </div>
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;">Jour limite de paiement</label>
+            <select class="settings-input" style="cursor: pointer; height: 37px;">
+              <option value="5">Chaque 5 du mois</option>
+              <option value="10" selected>Chaque 10 du mois</option>
+              <option value="15">Chaque 15 du mois</option>
+              <option value="30">Fin de mois</option>
+            </select>
+          </div>
+
+          <button type="button" style="margin-top: 8px; width: 100%; background: #1a1a1a; color: #ffffff; border: none; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+            Mettre à jour les grilles
+          </button>
+        </form>
+      </div>
+
     </div>
 
   </div>

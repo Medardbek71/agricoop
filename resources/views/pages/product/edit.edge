@@ -1,0 +1,158 @@
+@layout()
+<style>
+  .form-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+  }
+  .form-input {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #0f172a;
+    box-sizing: border-box;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+  .form-input:focus {
+    border-color: #1a1a1a;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+  }
+  .form-input:disabled {
+    background: #f8fafc;
+    color: #64748b;
+    cursor: not-allowed;
+  }
+  .stock-action-btn {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .stock-action-btn.active-add {
+    background: #ecfdf5;
+    color: #10b981;
+    border-color: #10b981;
+  }
+  .stock-action-btn.active-remove {
+    background: #fef2f2;
+    color: #ef4444;
+    border-color: #ef4444;
+  }
+</style>
+
+<div style="display: flex; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; min-height: 100vh; margin: 0; color: #0f172a;">
+  
+  @include('partials/aside-navigation')
+
+  <div style="flex: 1; padding: 48px 56px; box-sizing: border-box; display: flex; flex-direction: column; gap: 32px; max-width: 1000px; margin: 0 auto; width: 100%;">
+    
+    <div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+        <a href="/products" style="font-size: 13px; color: #64748b; text-decoration: none; font-weight: 500;">Produits</a>
+        <span style="font-size: 13px; color: #cbd5e1;">/</span>
+        <span style="font-size: 13px; color: #0f172a; font-weight: 500;">Modifier l'article</span>
+      </div>
+      <h1 style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.5px;">Modifier : {{ product.name }}</h1>
+      <p style="margin: 4px 0 0 0; font-size: 14px; color: #64748b;">Mettez à jour la fiche produit et ajustez l'état des stocks</p>
+    </div>
+
+    <form action="{{ route('product.update', { id: product.id }) }}?_method=PUT" method="POST" class="form-card">
+      {{ csrfField() }}
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        
+        <div>
+          <h3 style="margin: 0 0 20px 0; font-size: 16px; font-weight: 600; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">Informations générales</h3>
+          
+          <div class="form-group">
+            <label class="form-label" for="name">Nom de l'article</label>
+            <input type="text" id="name" name="name" class="form-input" value="{{ product.name }}" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="price">Prix unitaire (FCFA)</label>
+            <div style="position: relative; display: flex; align-items: center;">
+              <input type="number" id="price" name="price" class="form-input" style="padding-right: 60px;" value="{{ product.price }}" required min="0">
+              <span style="position: absolute; right: 16px; font-size: 12px; font-weight: 600; color: #64748b;">FCFA</span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Stock actuel</label>
+            <input type="text" class="form-input" value="{{ product.quantity }} unités actuellement" disabled>
+          </div>
+        </div>
+
+        <div style="background: #f8fafc; padding: 24px; border-radius: 12px; border: 1px dashed #cbd5e1;">
+          <h3 style="margin: 0 0 6px 0; font-size: 16px; font-weight: 600; color: #0f172a;">📦 Mouvement de stock rapide</h3>
+          <p style="margin: 0 0 20px 0; font-size: 13px; color: #64748b;">Ajoutez ou retirez directement des unités au hangar</p>
+
+          <div class="form-group">
+            <label class="form-label">Type d'opération</label>
+            <div style="display: flex; width: 100%;">
+              <button type="button" id="btn-add" class="stock-action-btn active-add" style="border-radius: 8px 0 0 8px; flex: 1;" onclick="setStockOp('add')">➕ Entrée / Arrivage</button>
+              <button type="button" id="btn-remove" class="stock-action-btn" style="border-radius: 0 8px 8px 0; flex: 1; margin-left: -1px;" onclick="setStockOp('remove')">➖ Sortie / Ajustement</button>
+            </div>
+            <input type="hidden" id="stock_operation" name="stock_operation" value="add">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="stock_qty">Quantité à impacter</label>
+            <input type="number" id="stock_qty" name="stock_qty" class="form-input" placeholder="Ex: 45" min="0" value="0">
+          </div>
+        </div>
+
+      </div>
+
+      <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 12px;">
+        <a href="/products" style="background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#ffffff'">
+          Annuler
+        </a>
+        <button type="submit" style="background: #1a1a1a; color: #ffffff; border: none; padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+          Enregistrer les modifications
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+<script>
+  function setStockOp(type) {
+    const btnAdd = document.getElementById('btn-add');
+    const btnRemove = document.getElementById('btn-remove');
+    const opInput = document.getElementById('stock_operation');
+    
+    if (type === 'add') {
+      btnAdd.className = 'stock-action-btn active-add';
+      btnRemove.className = 'stock-action-btn';
+      opInput.value = 'add';
+    } else {
+      btnAdd.className = 'stock-action-btn';
+      btnRemove.className = 'stock-action-btn active-remove';
+      opInput.value = 'remove';
+    }
+  }
+</script>
+@end

@@ -22,7 +22,7 @@
             background-color: {{ request.matchesRoute('productPage') ? '#f5f5f5' : 'transparent' }};"
      onmouseover="if(!{{ request.matchesRoute('productPage') }}) { this.style.color='#1a1a1a'; this.style.backgroundColor='#fafafa'; }" 
      onmouseout="if(!{{ request.matchesRoute('productPage') }}) { this.style.color='#666666'; this.style.backgroundColor='transparent'; }">
-    Produits
+    Recoltes
   </a>
 
       <!-- Stocks -->
@@ -37,7 +37,7 @@
   </a>
   
   <!-- Activités -->
-  <a href="{{ route('activityPage') }}" 
+  <a href="{{ route('activity.all') }}" 
      style="font-size: 14px; text-decoration: none; padding: 10px 12px; border-radius: 8px; transition: all 0.2s;
             color: {{ request.matchesRoute('activityPage') ? '#1a1a1a' : '#666666' }}; 
             font-weight: {{ request.matchesRoute('activityPage') ? '600' : '500' }}; 
@@ -55,18 +55,13 @@
             background-color: {{ request.matchesRoute('contributionsPage') ? '#f5f5f5' : 'transparent' }};"
      onmouseover="if(!{{ request.matchesRoute('contributionsPage') }}) { this.style.color='#1a1a1a'; this.style.backgroundColor='#fafafa'; }" 
      onmouseout="if(!{{ request.matchesRoute('contributionsPage') }}) { this.style.color='#666666'; this.style.backgroundColor='transparent'; }">
-    Contributions
+    Finances
   </a>
-
-
-
   <div style="flex-grow: 1;"></div>
 
   @form({route:'session.destroy', method:'delete'}) 
   <form>
-      <button>
-        Deconnexion
-      </button>
+    Deconnexion
   </form>
     
   @end

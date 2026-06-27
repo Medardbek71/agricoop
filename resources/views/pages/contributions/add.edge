@@ -1,8 +1,9 @@
 @layout()
 <div style="display: flex; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #fafafa; min-height: 100vh; margin: 0; color: #1a1a1a;">
   
-  <!-- BARRE LATÉRALE (Onglet Contributions Actif) -->
+  <!-- BARRE LATÉRALE -->
   @include('partials/aside-navigation')
+  
   <!-- CONTENU PRINCIPAL -->
   <div style="flex: 1; padding: 48px 56px; box-sizing: border-box; display: flex; flex-direction: column; gap: 40px; max-width: 800px;">
     
@@ -17,7 +18,7 @@
 
     <!-- BLOC FORMULAIRE -->
     <div style="background: #ffffff; border: 1px solid #ececec; padding: 40px; border-radius: 16px;">
-      <form action="{{ route('contributionsPage') }}" method="POST" style="display: flex; flex-direction: column; gap: 28px;">
+      <form action="{{ route('contribution.handleAdd') }}" method="POST" style="display: flex; flex-direction: column; gap: 28px;">
         {{ csrfField() }}
 
         <!-- Section 1 : Source & Motif -->
@@ -29,52 +30,64 @@
               <label for="member_id" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Membre cotisant</label>
               <select id="member_id" name="member_id" required style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; height: 45px; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'">
                 <option value="" disabled selected>Sélectionner le membre</option>
-                <!-- Boucle dynamique sur tes membres à intégrer ici -->
-                <option value="1">Jean Dupont (Penja)</option>
-                <option value="2">Marie Eto'o (Loum)</option>
+                @each(member in members)
+                  <option value="{{ member.id }}">{{ member.firstName }} {{ member.lastName }}</option>
+                @end
               </select>
             </div>
             
             <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-              <label for="contribution_type" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Type de contribution</label>
+              <label for="contribution_type" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Type de contribution (Motif)</label>
               <select id="contribution_type" name="type" required style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; height: 45px; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'">
                 <option value="" disabled selected>Choisir le motif</option>
-                <option value="cotisation">Cotisation périodique / Mensuelle</option>
-                <option value="adhesion">Droit d'adhésion</option>
-                <option value="materiel">Apport matériel / Équipement</option>
-                <option value="urgence">Caisse d'entraide / Urgence</option>
+                <option value="cotisation">Cotisation Mensuelle</option>
+                {{-- <option value="adhesion">Droit d'adhésion</option>
+                <option value="urgence">Caisse d'entraide / Urgence</option> --}}
               </select>
             </div>
+          </div>
+
+          <!-- BLOC SÉLECTION DU MOIS -->
+          <div id="month_selection_wrapper" style="display: none; flex-direction: column; gap: 8px; margin-top: 20px;">
+            <label for="contribution_month" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Mois associé à la cotisation</label>
+            <select id="contribution_month" name="contribution_month" style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; height: 45px; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'">
+              <option value="" selected disabled>Sélectionner le mois concerné</option>
+              <option value="january">Janvier</option>
+              <option value="february">Février</option>
+              <option value="march">Mars</option>
+              <option value="april">Avril</option>
+              <option value="may">Mai</option>
+              <option value="june">Juin</option>
+              <option value="july">Juillet</option>
+              <option value="august">Août</option>
+              <option value="september">Septembre</option>
+              <option value="october">Octobre</option>
+              <option value="november">Novembre</option>
+              <option value="december">Décembre</option>
+            </select>
+          </div>
+
+          <!-- BLOC PRÉCISION DU MOTIF -->
+          <div id="custom_reason_wrapper" style="display: none; flex-direction: column; gap: 8px; margin-top: 20px;">
+            <label for="custom_reason" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Précisez le motif / l'événement</label>
+            <input type="text" id="custom_reason" name="custom_reason" placeholder="Ex: Soutien deuil, Sinistre plantation, Heureux événement..." style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; height: 45px; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'">
           </div>
         </div>
 
         <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 8px 0;">
 
         <!-- Section 2 : Modalités Financières -->
-        <div>
-          <h2 style="margin: 0 0 20px 0; font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888888;">Valeur & Règlement</h2>
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <h2 style="margin: 0; font-size: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #888888;">Valeur & Règlement</h2>
           
-          <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-              <label for="amount" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Montant évalué (FCFA)</label>
-              <input type="number" id="amount" name="amount" min="0" required placeholder="Ex: 25000" style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'">
-            </div>
-            
-            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-              <label for="payment_method" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Mode de règlement</label>
-              <select id="payment_method" name="payment_method" required style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; height: 45px; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'">
-                <option value="" disabled selected>Sélectionner le mode</option>
-                <option value="momo">Mobile Money (OM / MoMo)</option>
-                <option value="cash">Espèces / Cash</option>
-                <option value="cheque">Chèque / Virement</option>
-                <option value="nature">Don en nature (Semences, Matériel)</option>
-              </select>
-            </div>
-          </div>
-
           <div style="display: flex; flex-direction: column; gap: 8px;">
-            <label align="left" for="notes" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Notes / Description (Optionnel)</label>
-            <textarea id="notes" name="notes" rows="3" placeholder="Ex: Cotisation pour le compte du deuxième trimestre ou détails du matériel fourni..." style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; font-family: inherit; resize: vertical; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'"></textarea>
+            <label for="amount" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Montant évalué (FCFA)</label>
+            <input type="number" id="amount" name="amount" min="0" required placeholder="Ex: 25000" style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; height: 45px; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'">
+          </div>
+            
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label for="notes" style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Description / Notes complémentaires</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Ex: Ajoutez ici des détails importants sur ce versement..." style="width: 100%; background: #ffffff; border: 1px solid #ececec; padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box; font-family: inherit; resize: vertical; transition: border-color 0.2s;" onfocus="this.style.borderColor='#1a1a1a'" onblur="this.style.borderColor='#ececec'"></textarea>
           </div>
         </div>
 
@@ -93,4 +106,35 @@
 
   </div>
 </div>
+
+<!-- LE SCRIPT JAVASCRIPT INDISPENSABLE -->
+<script>
+  document.getElementById('contribution_type').addEventListener('change', function() {
+    const monthWrapper = document.getElementById('month_selection_wrapper');
+    const monthSelect = document.getElementById('contribution_month');
+    
+    const reasonWrapper = document.getElementById('custom_reason_wrapper');
+    const reasonInput = document.getElementById('custom_reason');
+    
+    // Affichage dynamique du champ Mois
+    if (this.value === 'cotisation') {
+      monthWrapper.style.display = 'flex';
+      monthSelect.setAttribute('required', 'required');
+    } else {
+      monthWrapper.style.display = 'none';
+      monthSelect.removeAttribute('required');
+      monthSelect.value = ''; 
+    }
+    
+    // Affichage dynamique du champ Précision
+    if (this.value === 'urgence') {
+      reasonWrapper.style.display = 'flex';
+      reasonInput.setAttribute('required', 'required');
+    } else {
+      reasonWrapper.style.display = 'none';
+      reasonInput.removeAttribute('required');
+      reasonInput.value = ''; 
+    }
+  });
+</script>
 @end

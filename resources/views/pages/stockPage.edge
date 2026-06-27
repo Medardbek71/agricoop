@@ -18,16 +18,13 @@
     <!-- METRIQUES DE STOCK -->
     <div style="display: flex; gap: 20px; width: 100%;">
       <div style="flex: 1; background: #ffffff; border: 1px solid #ececec; padding: 20px; border-radius: 12px;">
-        <span style="color: #888888; font-size: 12px; font-weight: 600; text-transform: uppercase;">Volume Total Stocké</span>
-        <div style="font-size: 24px; font-weight: 600; margin-top: 8px;">14.2 <span style="font-size: 14px; color: #888888; font-weight: 500;">Tonnes</span></div>
-      </div>
-      <div style="flex: 1; background: #ffffff; border: 1px solid #ececec; padding: 20px; border-radius: 12px;">
-        <span style="color: #888888; font-size: 12px; font-weight: 600; text-transform: uppercase;">Entrées (Ce mois)</span>
-        <div style="font-size: 24px; font-weight: 600; margin-top: 8px; color: #10b981;">+3.5 <span style="font-size: 14px; font-weight: 500;">T</span></div>
+        <span style="color: #888888; font-size: 12px; font-weight: 600; text-transform: uppercase;">Prix total des marchandises</span>
+        <div style="font-size: 24px; font-weight: 600; margin-top: 8px; color: #10b981;">+{{ totalStockValue }} <span style="font-size: 14px; font-weight: 500;">Fcfa</span></div>
       </div>
       <div style="flex: 1; background: #ffffff; border: 1px solid #ececec; padding: 20px; border-radius: 12px;">
         <span style="color: #888888; font-size: 12px; font-weight: 600; text-transform: uppercase;">Alertes Seuil Critique</span>
-        <div style="font-size: 24px; font-weight: 600; margin-top: 8px; color: #df1c1c;">2 Articles</div>
+
+        <div style="font-size: 24px; font-weight: 600; margin-top: 8px; color: #df1c1c;">{{ productsWithAlert.length }}</div>
       </div>
     </div>
 
@@ -87,3 +84,46 @@
   </div>
 </div>
 @end
+
+
+{{-- 
+<!-- PISTES DE FILTRES MINIMALISTES -->
+<div style="display: flex; gap: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;">
+  <a href="/activities" class="filter-btn {{ !currentFilter ? 'active' : '' }}">Tout voir</a>
+  <a href="/activities?type=sale" class="filter-btn {{ currentFilter === 'sale' ? 'active' : '' }}">💰 Ventes</a>
+  <a href="/activities?type=stock" class="filter-btn {{ currentFilter === 'stock' ? 'active' : '' }}">📦 Stocks</a>
+  <a href="/activities?type=member" class="filter-btn {{ currentFilter === 'member' ? 'active' : '' }}">👥 Membres</a>
+</div>
+
+<!-- TIMELINE CONTAINER -->
+<div class="timeline-container">
+  @each(activity in activities)
+    <div class="timeline-item">
+      <!-- Formatage de l'heure/date (via un helper ou luxon intégré à Adonis) -->
+      <span class="time-label">{{ activity.createdAt.toFormat('HH:mm') }}</span>
+      
+      <!-- Badge dynamique selon le type -->
+      <div class="timeline-badge badge-{{ activity.type }}"></div>
+      
+      <div style="flex: 1; padding-top: 6px;">
+        <h4 style="margin: 0; font-size: 14px; font-weight: 600;">{{ activity.title }}</h4>
+        <p style="margin: 4px 0 0 0; font-size: 14px; color: #475569;">
+          {{{ activity.description }}} <!-- Les trois accolades permettent de rendre le HTML si tu mets du gras en BDD -->
+        </p>
+        
+        <!-- Affichage conditionnel de la meta (comme le montant en FCFA) -->
+        @if(activity.type === 'sale' && activity.meta?.amount)
+          <div class="amount-badge">
+            +{{ activity.meta.amount }} <span style="font-size: 10px;">FCFA</span>
+          </div>
+        @endif
+
+        @if(activity.type === 'stock' && activity.meta?.author)
+          <div class="author-badge">👤 Par: {{ activity.meta.author }}</div>
+        @endif
+      </div>
+    </div>
+  @else
+    <p>Aucune activité enregistrée pour le moment.</p>
+  @end
+</div> --}}

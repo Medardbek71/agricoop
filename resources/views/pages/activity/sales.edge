@@ -1,0 +1,104 @@
+@layout()
+<style>
+  .filter-btn {
+    background: #ffffff;
+    color: #666666;
+    border: 1px solid #e5e7eb;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .filter-btn:hover {
+    border-color: #1a1a1a;
+    color: #1a1a1a;
+    background-color: #f9fafb;
+  }
+  .filter-btn.active {
+    background: #1a1a1a;
+    color: #ffffff;
+    border-color: #1a1a1a;
+  }
+  .timeline-item {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    position: relative;
+    z-index: 2;
+    padding: 12px;
+    margin: -12px;
+    border-radius: 12px;
+    transition: background-color 0.2s ease;
+  }
+  .timeline-item:hover {
+    background-color: #f9fafb;
+  }
+  .timeline-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 4px solid #ffffff;
+    box-shadow: 0 0 0 1px #e5e7eb;
+    background-size: 14px;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+</style>
+
+<div style="display: flex; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; min-height: 100vh; margin: 0; color: #0f172a;">
+  
+  <!-- BARRE LATÉRALE STYLISÉE -->
+  @include('partials/aside-navigation')
+
+  <!-- CONTENU PRINCIPAL -->
+  <div style="flex: 1; padding: 40px 56px; box-sizing: border-box; display: flex; flex-direction: column; gap: 32px; max-width: 1200px; margin: 0 auto; width: 100%;">
+    
+    <!-- En-tête -->
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; color: #0f172a;">Journal d'activités</h1>
+        <p style="margin: 6px 0 0 0; font-size: 14px; color: #64748b;">Historique en temps réel des actions de la coopérative</p>
+      </div>
+      <!-- Optionnel : Un indicateur de statut en direct -->
+      <div style="display: flex; align-items: center; gap: 8px; background: #ecfdf5; padding: 6px 12px; border-radius: 20px; border: 1px solid #a7f3d0;">
+        <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; display: inline-block; animation: pulse 2s infinite;"></span>
+        <span style="font-size: 12px; font-weight: 600; color: #065f46;">Mis à jour en direct</span>
+      </div>
+    </div>
+
+    @include('partials/activity-navigation')
+
+    <!-- TIMELINE CONTAINER -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 40px; border-radius: 16px; display: flex; flex-direction: column; gap: 36px; position: relative; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);">
+      
+      <!-- Ligne verticale arrière-plan -->
+      <div style="position: absolute; left: 103px; top: 56px; bottom: 56px; width: 2px; background-color: #f1f5f9; z-index: 1;"></div>
+
+      <!-- ÉLÉMENT 1 : Vente de produit -->
+      {{-- @dd(activities) --}}
+      @each(activity in activities)
+        <div class="timeline-item">
+            <span style="font-size: 13px; color: #64748b; width: 60px; text-align: right; padding-top: 8px; font-weight: 600; font-variant-numeric: tabular-nums;">{{activity.createdAt.toRelative()}}</span>
+            <div class="timeline-badge" style="background-color: #eff6ff; box-shadow: 0 0 0 1px #3b82f6; background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 24 24%22 stroke=%22%233b82f6%22 stroke-width=%222.5%22><path stroke-linecap=%22round%22 stroke-linejoin=%22round%22 d=%22M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.854-1.106-2.24 0-3.093 1.15-.89 3.016-.89 4.166 0 .438.34.744.79.916 1.28M12 3v3m0 12v3%22/></svg>');"></div>
+            <div style="flex: 1; padding-top: 6px;">
+            <h4 style="margin: 0; font-size: 14px; font-weight: 600; color: #0f172a;">Vente enregistrée</h4>
+            <p style="margin: 4px 0 0 0; font-size: 14px; color: #475569; line-height: 1.5;">
+                {{activity.description}}
+            </p>
+            </div>
+        </div>
+      @endeach
+    </div>
+
+  </div>
+</div>
+@end

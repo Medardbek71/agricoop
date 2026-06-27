@@ -7,6 +7,23 @@
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 
+export class ActivitySchema extends BaseModel {
+  static $columns = ['createdAt', 'description', 'id', 'meta', 'title', 'type'] as const
+  $columns = ActivitySchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column()
+  declare description: string
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare meta: any | null
+  @column()
+  declare title: string
+  @column()
+  declare type: string
+}
+
 export class ContributionSchema extends BaseModel {
   static $columns = ['amount', 'createdAt', 'id', 'isComplete', 'memberId', 'rest', 'updatedAt'] as const
   $columns = ContributionSchema.$columns

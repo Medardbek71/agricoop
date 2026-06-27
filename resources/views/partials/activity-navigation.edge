@@ -1,0 +1,24 @@
+
+    <div style="display: flex; gap: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;">
+  
+  <a href="{{ route('activity.all') }}" 
+     class="filter-btn {{ request.url() === route('activity.all') ? 'active' : '' }}">
+     Tout voir
+  </a>
+  
+  <a href="{{ route('activity.sales') }}" 
+     class="filter-btn {{ request.url() === route('activity.sales') ? 'active' : '' }}">
+      Ventes
+  </a>
+  
+  <a href="{{ route('activity.stock') }}" 
+     class="filter-btn {{ request.url() === route('activity.stock') ? 'active' : '' }}">
+     Stocks
+  </a>
+  
+  <a href="{{ route('activity.member') }}" 
+     class="filter-btn {{ request.url() === route('activity.member') ? 'active' : '' }}">
+     Membres
+  </a>
+
+</div>

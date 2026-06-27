@@ -8,8 +8,11 @@ export default class extends BaseSchema {
       table.increments('id')
       table.integer('member_id').references('member')
       table.integer('amount')
+      table.string('reason')
       table.boolean('isComplete')
       table.integer('rest').nullable()
+      table.string('contribution_month').nullable()
+      table.string('note').nullable()
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

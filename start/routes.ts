@@ -22,6 +22,7 @@ router.group(()=>{
   router.group(()=>{
     router.get('index',[controllers.Navigations,'contributionList']).as('index')
     router.get('add',[controllers.Navigations,'addContribution']).as('add')
+    router.post('handle',[controllers.Navigations,'handleAddContribution']).as('handleAdd')
   }).prefix('contribution').as('contribution')
 
   router.group(()=>{
@@ -30,6 +31,9 @@ router.group(()=>{
     router.get('addSell',[controllers.Navigations,"addSell"]).as('addSell')
     router.post('handle',[controllers.Navigations,'handleAddProduct']).as('handleAdd')
     router.post('handleSell',[controllers.Navigations,'handleAddSell']).as('handleSell')
+    router.get('edit/:id',[controllers.Navigations,'editProduct']).as('edit')
+    router.delete('delete/:id',[controllers.Navigations,'deleteProduct']).as('delete')
+    router.put('update/:id',[controllers.Navigations,'updateProduct']).as('update')
   }).prefix('product').as('product')
 
   router.group(()=>{
@@ -39,7 +43,14 @@ router.group(()=>{
     router.delete('delete/:id',[controllers.Navigations,'deleteMember']).as('delete')
   }).prefix('member').as('member')
 
-}).use(middleware.auth())
+  router.group(()=>{
+    router.get('index',[controllers.Navigations,'allActivity']).as('all')
+    router.get('sales',[controllers.Navigations,'sellActivity']).as('sales')
+    router.get('stock',[controllers.Navigations,'stockActivity']).as('stock')
+    router.get('member',[controllers.Navigations,'memberActivity']).as('member')
+  }).prefix('activity').as('activity')
+  })
+
 
 router
   .group(() => {
