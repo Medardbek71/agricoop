@@ -1,5 +1,6 @@
 import Activity from '#models/activity'
 import Contribution from '#models/contribution'
+import ContributionInfo from '#models/contribution_info'
 import Member from '#models/member'
 import Product from '#models/product'
 import { contributionValidator } from '#validators/contribution'
@@ -7,11 +8,22 @@ import { memberValidator } from '#validators/member'
 import { productValidator } from '#validators/product'
 import { sellValidator } from '#validators/sell'
 import { updateProductValidator } from '#validators/update_product'
+import { contributionInfoValidator } from '#validators/contribution_settings_info'
 import type { HttpContext } from '@adonisjs/core/http'
 
+interface FormattedMember {
+    name: string
+    lastAmount: string
+    lastPeriod: string
+    statusLabel: string
+    statusStyle: string
+    months: Record<string, 'empty' | 'paid' | 'late'>
+}
+
 export default class NavigationsController {
-    public index({view}:HttpContext){
-        return view.render('pages/home')
+    public async index({view}:HttpContext){
+        const activities = await Activity.all()
+        return view.render('pages/home',{activities:activities})
     }
 
     public async memberList({view}:HttpContext){
@@ -24,8 +36,8 @@ export default class NavigationsController {
     }
     
 
-    public activityPage({view}:HttpContext){
-    return view.render('pages/activity/all')
+    public async activityPage({view}:HttpContext){
+        return view.render('pages/activity/all')
     }
 
     public contributionPage({view}:HttpContext){
@@ -60,9 +72,9 @@ export default class NavigationsController {
         return view.render('pages/product/add',{members})
     }
 
-    public contributionList({view}:HttpContext){
-        return view.render('pages/contributions/index')
-    }
+    // public contributionList({view}:HttpContext){
+    //     return view.render('pages/contributions/index')
+    // }
 
     public async addContribution({view}:HttpContext){
         const  members = await Member.all()
@@ -268,36 +280,192 @@ export default class NavigationsController {
     }
 
     public async handleAddContribution({ request, response, session }: HttpContext) {
-        try {
-            const data = request.only(['member_id', 'amount', 'reason', 'isComplete', 'rest', 'contribution_month', 'note'])
-            console.log(data)
-            console.log('start validation')
-            const payload = request.validateUsing(contributionValidator)
-            console.log('validation passed', payload)
+    try {
+        const validatedData = await request.validateUsing(contributionValidator)
+        const { amount, notes, contribution_month, member_id } = validatedData
+
+        const rules = await ContributionInfo.firstOrFail()
+        const monthlyContributionAmount = rules.monthlyContributionAmount || 0
+
+        const existingContribution = await Contribution.query()
+            .where('memberId', member_id)
+            .where('contributionMonth', contribution_month)
+            .first() 
+
+        if (existingContribution) {
+            if (existingContribution.isComplete) {
+                session.flash('error', "Ce membre a déjà entièrement payé sa contribution pour ce mois.")
+                return response.redirect().back()
+            }
+
+            const previousAmount = existingContribution.amount ?? 0
+            const newTotalAmount = previousAmount + amount
+            const newRest = newTotalAmount - monthlyContributionAmount
+
+            existingContribution.amount = newTotalAmount
+            existingContribution.rest = newRest
+            existingContribution.isComplete = newRest >= 0
+            
+            await existingContribution.save()
 
             await Activity.create({
                 type: 'contribution',
-                title: 'Nouvelle contribution enregistrée',
-                description: `Une nouvelle contribution a été enregistrée pour le membre avec l'ID ${payload.member_id} pour le mois de ${payload.contribution_month}.`,
-                meta: { memberId: payload.member_id, amount: payload.amount }
+                title: 'Contribution complétée',
+                description: `Le paiement du membre ID ${member_id} pour le mois de ${contribution_month} a été complété de ${amount}.`,
+                meta: { memberId: member_id, amount }
             })
 
+            session.flash('success', 'Le complément de contribution a été enregistré avec succès.')
+            return response.redirect().toRoute('contribution.index')
+        }
 
-            await Contribution.create({
-                memberId: payload.member_id,
-                amount: payload.amount,
-                reason: payload.reason,
-                isComplete: payload.isComplete,
-                rest: payload.rest,
-                contributionMonth: payload.contribution_month,
-                note: payload.note
+        const rest = amount - monthlyContributionAmount
+
+        await Activity.create({
+            type: 'contribution',
+            title: 'Nouvelle contribution enregistrée',
+            description: `Une nouvelle contribution a été enregistrée pour le membre avec l'ID ${member_id} pour le mois de ${contribution_month}.`,
+            meta: { memberId: member_id, amount }
+        })
+
+        await Contribution.create({
+            amount,
+            contributionMonth: contribution_month,
+            reason: 'reason',
+            note: notes,
+            memberId: member_id,
+            rest,
+            isComplete: rest >= 0 
+        })
+
+        session.flash('success', 'La contribution a été enregistrée avec succès.')
+        return response.redirect().toRoute('contribution.index')
+
+    } catch (error) {
+        console.error(error)
+        session.flash('error', "Une erreur est survenue lors de l'enregistrement de la contribution.")
+        return response.redirect().back()
+    }
+}
+
+
+public async contributionList({ view }: HttpContext) {
+        try {
+            // Récupérer tous les membres avec leurs contributions
+            const databaseMembers: Member[] = await Member.query().preload('contribution')
+            
+            // Clés des mois avec typage strict
+            const monthsKeys = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'] as const
+            
+            const monthsLabelsFull: Record<string, string> = {
+                jan: 'Janvier', feb: 'Février', mar: 'Mars', apr: 'Avril', may: 'Mai', jun: 'Juin',
+                jul: 'Juillet', aug: 'Août', sep: 'Septembre', oct: 'Octobre', nov: 'Novembre', dec: 'Décembre'
+            }
+
+            // const totalMonthlyRevenue = await Contribution.query().
+            const result1 = await Contribution.query().sum('amount as total')
+            const totalRevenue = result1[0].$extras.total || 0
+
+            const currentMonth = 'june' 
+
+            const result = await Contribution.query()
+                .where('contributionMonth', currentMonth)
+                .sum('amount as total')
+
+            const totalMonthlyRevenue = Number(result[0].$extras.total || 0)
+
+            // 2. Formater les données avec le type de retour explicite
+            const members: FormattedMember[] = databaseMembers.map((member) => {
+                // Initialiser le dictionnaire des mois avec le type adéquat
+                const monthsStatus: Record<string, 'empty' | 'paid' | 'late'> = {}
+                let lastContribution: any = null // Mets le type de ton modèle ici (ex: Contribution)
+
+                // Initialiser tous les mois à 'empty'
+                monthsKeys.forEach((m) => {
+                    monthsStatus[m] = 'empty'
+                })
+
+                // Remplir le statut des mois en fonction des contributions réelles
+                // Note: Ajuste 'contributionInfos' ou 'contributions' selon ta relation Lucid
+                const userContributions = (member as any).contributionInfos || member.contribution || []
+
+                userContributions.forEach((contrib: any) => {
+                    if (contrib.contributionMonth) {
+                        const monthKey = contrib.contributionMonth.toLowerCase().substring(0, 3)
+                        
+                        // Validation stricte que la clé existe bien parmi nos 12 mois
+                        if (monthsKeys.includes(monthKey as any)) {
+                            monthsStatus[monthKey] = contrib.isComplete ? 'paid' : 'late'
+                        }
+                        
+                        // Garder la contribution la plus récente
+                        if (!lastContribution || contrib.updatedAt > lastContribution.updatedAt) {
+                            lastContribution = contrib
+                        }
+                    }
+                })
+
+                // Déterminer le statut global pour le badge
+                let statusLabel = 'En attente'
+                let statusStyle = 'background-color: #fff9eb; color: #f59e0b;'
+
+                if (lastContribution) {
+                    if (lastContribution.isComplete) {
+                        statusLabel = 'Réglé'
+                        statusStyle = 'background-color: #ecfdf5; color: #10b981;'
+                    } else {
+                        statusLabel = 'En retard'
+                        statusStyle = 'background-color: #fde8e8; color: #df1c1c;'
+                    }
+                }
+
+                // Formater la période du dernier montant affiché
+                let lastPeriod = 'Aucune'
+                if (lastContribution && lastContribution.contributionMonth) {
+                    const labelKey = lastContribution.contributionMonth.toLowerCase().substring(0, 3)
+                    lastPeriod = `${monthsLabelsFull[labelKey] || lastContribution.contributionMonth} 2026`
+                }
+
+                return {
+                    name: `${member.firstName || ''} ${member.lastName || member.lastName || ''}`.trim(),
+                    lastAmount: lastContribution ? Number(lastContribution.amount).toLocaleString() : '0',
+                    lastPeriod: lastPeriod,
+                    statusLabel: statusLabel,
+                    statusStyle: statusStyle,
+                    months: monthsStatus
+                }
             })
-            // session.flash('success', 'La contribution a été enregistrée avec succès.')
-            // return response.redirect().toRoute('contribution.index')
+
+            // 3. Rendu de la vue avec le contrat d'interface respecté
+            return view.render('pages/contributions/index', { members,totalMonthlyRevenue,totalRevenue })
+
         } catch (error) {
             console.error(error)
-            session.flash('error', "Une erreur est survenue lors de l'enregistrement de la contribution.")
-            return response.redirect().back()
+            // return view.render('errors/not-found') 
         }
-    }   
+    }
+
+
+
+    public async handleContributionsSettings({ request, response, session }: HttpContext) {
+    try {
+        const payload = await request.validateUsing(contributionInfoValidator)
+        await ContributionInfo.updateOrCreate(
+            { id: 1 },
+            {
+                monthlyContributionAmount: payload.monthly_contribution_amount,
+                adhesionFeeAmount: payload.adhesion_fee_amount,
+                paymentLimitDay: payload.payment_limit_day
+            }
+        )
+
+        session.flash('success', "Les paramètres de contribution ont été mis à jour.")
+        return response.redirect().back()
+
+    } catch (error) {
+        console.error(error)
+            session.flash('error', "Une erreur est survenue lors de l'enregistrement des configurations.")
+        }
+        return response.redirect().back()
+    }
 }

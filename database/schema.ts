@@ -24,11 +24,30 @@ export class ActivitySchema extends BaseModel {
   declare type: string
 }
 
+export class ContributionInfoSchema extends BaseModel {
+  static $columns = ['adhesionFeeAmount', 'createdAt', 'id', 'monthlyContributionAmount', 'paymentLimitDay', 'updatedAt'] as const
+  $columns = ContributionInfoSchema.$columns
+  @column()
+  declare adhesionFeeAmount: number | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare monthlyContributionAmount: number | null
+  @column()
+  declare paymentLimitDay: number | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
 export class ContributionSchema extends BaseModel {
-  static $columns = ['amount', 'createdAt', 'id', 'isComplete', 'memberId', 'rest', 'updatedAt'] as const
+  static $columns = ['amount', 'contributionMonth', 'createdAt', 'id', 'isComplete', 'memberId', 'note', 'reason', 'rest', 'updatedAt'] as const
   $columns = ContributionSchema.$columns
   @column()
   declare amount: number | null
+  @column()
+  declare contributionMonth: string | null
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime | null
   @column({ isPrimary: true })
@@ -37,6 +56,10 @@ export class ContributionSchema extends BaseModel {
   declare isComplete: boolean | null
   @column()
   declare memberId: number | null
+  @column()
+  declare note: string | null
+  @column()
+  declare reason: string | null
   @column()
   declare rest: number | null
   @column.dateTime({ autoCreate: true, autoUpdate: true })

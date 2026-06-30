@@ -97,25 +97,26 @@
       </div>
       
       <div>
-        <a href="#settings-section" class="action-card-btn" style="border-color: #cbd5e1; background: #f8fafc;">
-          <span>⚙️</span> Configurer les montants
-        </a>
       </div>
     </div>
 
     <div style="display: flex; gap: 20px; width: 100%;">
       <div style="flex: 1; background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px;">
-        <span style="color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase;">Collecté (Mois en cours)</span>
-        <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">450 000 <span style="font-size: 12px; color: #64748b; font-weight: 500;">FCFA</span></div>
+        <span style="color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase;">Total dans la caisse</span>
+        <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">{{totalRevenue}}<span style="font-size: 12px; color: #64748b; font-weight: 500;">FCFA</span></div>
       </div>
-      <div style="flex: 1; background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px;">
+           <div style="flex: 1; background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px;">
+        <span style="color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase;">Collecté (Mois en cours)</span>
+        <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">{{totalMonthlyRevenue}} <span style="font-size: 12px; color: #64748b; font-weight: 500;">FCFA</span></div>
+      </div>
+      {{-- <div style="flex: 1; background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px;">
         <span style="color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase;">Taux de participation</span>
         <div style="font-size: 24px; font-weight: 700; margin-top: 8px; color: #10b981;">82%</div>
-      </div>
-      <div style="flex: 1; background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px;">
+      </div> --}}
+      {{-- <div style="flex: 1; background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px;">
         <span style="color: #64748b; font-size: 12px; font-weight: 600; text-transform: uppercase;">Retards constatés</span>
         <div style="font-size: 24px; font-weight: 700; margin-top: 8px; color: #df1c1c;">5 membres</div>
-      </div>
+      </div> --}}
     </div>
 
     <div style="display: flex; gap: 24px; align-items: flex-start; width: 100%;">
@@ -125,7 +126,7 @@
           <h2 style="margin: 0; font-size: 16px; font-weight: 600;">Registre des versements et calendrier annuel</h2>
         </div>
         
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        {{-- <table style="width: 100%; border-collapse: collapse; text-align: left;">
           <thead>
             <tr style="border-bottom: 1px solid #f0f0f0;">
               <th style="padding-bottom: 16px; color: #64748b; font-weight: 500; font-size: 13px; width: 45%;">Membre & Historique 2026</th>
@@ -229,7 +230,6 @@
                   <div class="month-dot month-empty">D</div>
                 </div>
               </td>
-              {{-- <td style="padding: 18px 0; color: #475569; font-size: 14px; vertical-align: top;">Cotisation Mensuelle</td> --}}
               <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; text-align: right; font-weight: 600; vertical-align: top;">10 000 <span style="font-size: 11px; color:#64748b;">FCFA</span><br><span style="font-size:11px; font-weight:400; color:#df1c1c;">Mai 2026</span></td>
               <td style="padding: 18px 0; text-align: right; vertical-align: top;">
                 <span style="background-color: #fde8e8; color: #df1c1c; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">En retard</span>
@@ -237,18 +237,77 @@
             </tr>
 
           </tbody>
-        </table>
+        </table> --}}
+
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+  <thead>
+    <tr style="border-bottom: 1px solid #f0f0f0;">
+      <th style="padding-bottom: 16px; color: #64748b; font-weight: 500; font-size: 13px; width: 45%;">Membre & Historique 2026</th>
+      <th style="padding-bottom: 16px; color: #64748b; font-weight: 500; font-size: 13px; width: 20%; text-align: right;">Dernier Montant</th>
+      <th style="padding-bottom: 16px; color: #64748b; font-weight: 500; font-size: 13px; width: 15%; text-align: right;">Statut</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+    {{-- Boucle principale sur les membres --}}
+    @each(member in members)
+      <tr style="border-bottom: 1px solid #f8fafc;">
+        <td style="padding: 18px 0;">
+          <div style="color: #1a1a1a; font-size: 14px; font-weight: 600;">{{ member.name }}</div>
+          
+          <div class="mini-calendar">
+            {{-- Boucle pour générer les 12 pastilles de mois --}}
+            @each((label, key) in { 
+              jan: 'J', feb: 'F', mar: 'M', apr: 'A', may: 'M', jun: 'J', 
+              jul: 'J', aug: 'A', sep: 'S', oct: 'O', nov: 'N', dec: 'D' 
+            })
+              {{-- On récupère le statut du mois courant (ex: member.months['jan']) --}}
+              @let(monthStatus = member.months[key] || 'empty')
+              
+              <div class="month-dot month-{{ monthStatus }}" 
+                   title="{{ label }} : {{ monthStatus === 'paid' ? 'Payé' : (monthStatus === 'late' ? 'En retard' : 'Non payé') }}">
+                {{ label }}
+              </div>
+            @end
+          </div>
+        </td>
+        
+        <td style="padding: 18px 0; color: #1a1a1a; font-size: 14px; text-align: right; font-weight: 600; vertical-align: top;">
+          {{ member.lastAmount }} <span style="font-size: 11px; color:#64748b;">FCFA</span>
+          <br>
+          <span style="font-size:11px; font-weight:400; color:{{ member.statusLabel === 'En retard' ? '#df1c1c' : '#888888' }};">
+            {{ member.lastPeriod }}
+          </span>
+        </td>
+        
+        <td style="padding: 18px 0; text-align: right; vertical-align: top;">
+          <span style="{{ member.statusStyle }} padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+            {{ member.statusLabel }}
+          </span>
+        </td>
+      </tr>
+    @else
+      <tr>
+        <td colspan="3" style="text-align: center; padding: 24px; color: #64748b;">
+          Aucun historique trouvé pour cette année.
+        </td>
+      </tr>
+    @end
+
+  </tbody>
+</table>
       </div>
 
       <div id="settings-section" style="flex: 1; background: #ffffff; border: 1px solid #e2e8f0; padding: 24px; border-radius: 16px; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05); position: sticky; top: 24px;">
-        <h2 style="margin: 0 0 6px 0; font-size: 16px; font-weight: 600; color: #0f172a;">⚙️ Configuration</h2>
+        <h2 style="margin: 0 0 6px 0; font-size: 16px; font-weight: 600; color: #0f172a;">Configuration</h2>
         <p style="margin: 0 0 20px 0; font-size: 13px; color: #64748b;">Modifiez les exigences financières de la coopérative</p>
         
-        <form action="#" method="POST" style="display: flex; flex-direction: column; gap: 16px;">
+        <form action="{{ route('handleContributionsSetting') }}" method="POST" style="display: flex; flex-direction: column; gap: 16px;">
+          {{ csrfField() }}
           <div>
             <label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;">Cotisation Mensuelle</label>
             <div style="position: relative; display: flex; align-items: center;">
-              <input type="number" class="settings-input" value="10000" style="padding-right: 55px;">
+              <input type="number" class="settings-input" name="monthly_contribution_amount" value="10000" style="padding-right: 55px;">
               <span style="position: absolute; right: 12px; font-size: 11px; font-weight: 600; color: #64748b;">FCFA</span>
             </div>
           </div>
@@ -256,14 +315,14 @@
           <div>
             <label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;">Frais d'Adhésion Unique</label>
             <div style="position: relative; display: flex; align-items: center;">
-              <input type="number" class="settings-input" value="15000" style="padding-right: 55px;">
+              <input type="number" class="settings-input" name="adhesion_fee_amount" value="15000" style="padding-right: 55px;">
               <span style="position: absolute; right: 12px; font-size: 11px; font-weight: 600; color: #64748b;">FCFA</span>
             </div>
           </div>
 
           <div>
             <label style="display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px;">Jour limite de paiement</label>
-            <select class="settings-input" style="cursor: pointer; height: 37px;">
+            <select class="settings-input" name="payment_limit_day" style="cursor: pointer; height: 37px;">
               <option value="5">Chaque 5 du mois</option>
               <option value="10" selected>Chaque 10 du mois</option>
               <option value="15">Chaque 15 du mois</option>
@@ -271,7 +330,7 @@
             </select>
           </div>
 
-          <button type="button" style="margin-top: 8px; width: 100%; background: #1a1a1a; color: #ffffff; border: none; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+          <button type="submit" style="margin-top: 8px; width: 100%; background: #1a1a1a; color: #ffffff; border: none; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
             Mettre à jour les grilles
           </button>
         </form>

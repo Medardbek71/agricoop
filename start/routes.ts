@@ -18,6 +18,7 @@ router.group(()=>{
   router.get('activity',[controllers.Navigations,'activityPage']).as('activityPage')
   router.get('contributions',[controllers.Navigations,'contributionPage']).as('contributionsPage')
   router.get('stocks',[controllers.Navigations,'stockPage']).as('stockPage')
+  router.post('contribution-settings',[controllers.Navigations,'handleContributionsSettings']).as('handleContributionsSetting')
 
   router.group(()=>{
     router.get('index',[controllers.Navigations,'contributionList']).as('index')

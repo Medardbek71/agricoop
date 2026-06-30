@@ -9,6 +9,7 @@ export type ScannedRoutes = {
     'activityPage': { paramsTuple?: []; params?: {} }
     'contributionsPage': { paramsTuple?: []; params?: {} }
     'stockPage': { paramsTuple?: []; params?: {} }
+    'handleContributionsSetting': { paramsTuple?: []; params?: {} }
     'contribution.index': { paramsTuple?: []; params?: {} }
     'contribution.add': { paramsTuple?: []; params?: {} }
     'contribution.handleAdd': { paramsTuple?: []; params?: {} }
@@ -77,6 +78,7 @@ export type ScannedRoutes = {
     'session.create': { paramsTuple?: []; params?: {} }
   }
   POST: {
+    'handleContributionsSetting': { paramsTuple?: []; params?: {} }
     'contribution.handleAdd': { paramsTuple?: []; params?: {} }
     'product.handleAdd': { paramsTuple?: []; params?: {} }
     'product.handleSell': { paramsTuple?: []; params?: {} }
